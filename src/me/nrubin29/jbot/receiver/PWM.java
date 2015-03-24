@@ -1,26 +1,23 @@
 package me.nrubin29.jbot.receiver;
 
+/**
+ * Represents a device which operates based on pulse width modulations.
+ * @author Noah Rubin
+ * @see Motor
+ */
 public class PWM extends Device {
 
 	private double percent;
 	
-	public PWM(int id) {
+	protected PWM(int id) {
 		super(id);
-		
-		echo(getID(), "/sys/class/gpio/export");
 	}
 	
-	public double getPercent() {
+	protected double getPercent() {
 		return percent;
 	}
 	
-	public void setPercent(double percent) {
-		this.percent = percent; // (percent / 100);
-	}
-	
-	@Override
-	public void setDirection(Direction direction) {
-		super.setDirection(direction);
-		echo(direction, "/sys/class/gpio/gpio" + getID() + "/direction");
+	protected void setPercent(double percent) {
+		this.percent = Math.max(0, Math.min(1, percent));
 	}
 }

@@ -47,40 +47,41 @@ public class Remote {
 			System.out.println("Loaded Class");
 			
 			Robot instance = (Robot) cls.newInstance();
+			
+			System.out.println("Initializing");
+			
 			instance.preInit();
 			instance.init();
 			instance.postInit();
 			
 			System.out.println("Running");
 			
+			instance.run();
+			
 			writer.write("ready");
 			writer.newLine();
 			writer.flush();
 			
 			while (true) {
-				String line = reader.readLine();
-				
-				if (line == null) {
-					break;
-				}
-				
-				String[] data = line.split(" ");
-				Controller controller = Controller.get(Integer.valueOf(data[0]));
-				controller.setXAxis(Float.valueOf(data[1]));
-				controller.setYAxis(Float.valueOf(data[2]));
-				
-				System.out.println("X: " + controller.getXAxis() + "Y: " + controller.getYAxis());
-				
-				// percent = Math.round(((50.0 * value + 50.0) / 100) * 100.0) / 100.0;
-				
-				if (instance.getMotor("left").isPresent()) {
+				if (instance.isInputEnabled()) {
+					String line = reader.readLine();
+					
+					if (line == null) {
+						break;
+					}
+					
+					String[] data = line.split(" ");
+					Controller controller = Controller.get(Integer.valueOf(data[0]));
+					controller.setXAxis(Float.valueOf(data[1]));
+					controller.setYAxis(Float.valueOf(data[2]));
+					
+					System.out.println("X: " + controller.getXAxis() + "Y: " + controller.getYAxis());
+					
 					System.out.println("Setting left to " + (Math.round(((50.0 * (controller.getYAxis() + controller.getXAxis()) + 50.0) / 100) * 100.0) / 100.0));
-					instance.getMotor("left").get().setPercent((Math.round(((50.0 * (controller.getYAxis() + controller.getXAxis()) + 50.0) / 100) * 100.0) / 100.0));
-				}
-				
-				if (instance.getMotor("right").isPresent()) {
-					System.out.println("Setting right to " + (Math.round(((50.0 * (controller.getYAxis() - controller.getXAxis()) + 50.0) / 100) * 100.0) / 100.0));
-					instance.getMotor("right").get().setPercent((Math.round(((50.0 * (controller.getYAxis() - controller.getXAxis()) + 50.0) / 100) * 100.0) / 100.0));
+					instance.getMotor("left").setPercent(Math.round(((50.0 * (controller.getYAxis() + controller.getXAxis()) + 50.0) / 100) * 100.0) / 100.0);
+					
+					System.out.println("Setting right to " + (1 - Math.round(((50.0 * (controller.getYAxis() - controller.getXAxis()) + 50.0) / 100) * 100.0) / 100.0));
+					instance.getMotor("right").setPercent(1 - Math.round(((50.0 * (controller.getYAxis() - controller.getXAxis()) + 50.0) / 100) * 100.0) / 100.0);
 				}
 			}
 			

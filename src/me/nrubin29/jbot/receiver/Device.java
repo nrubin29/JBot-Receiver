@@ -17,6 +17,7 @@ public abstract class Device {
 	
 	protected Device(int id) {
 		this.id = id;
+		echo(getID(), "/sys/class/gpio/export");
 	}
 	
 	/**
@@ -40,6 +41,7 @@ public abstract class Device {
 	 * @param direction The direction of this device.
 	 */
 	public void setDirection(Direction direction) {
+		echo(direction, "/sys/class/gpio/gpio" + getID() + "/direction");
 		this.direction = direction;
 	}
 	
